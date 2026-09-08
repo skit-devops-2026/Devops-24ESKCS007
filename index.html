@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RealEstate - Find Your Perfect Next Chapter</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header / Navigation Bar -->
+    <header class="navbar-container">
+        <div class="container navbar">
+            <a href="#" class="logo">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-building-columns"></i>
+                </div>
+                <span class="logo-text">RealEstate</span>
+            </a>
+            
+            <nav class="nav-pill" id="navPill">
+                <a href="#properties" class="nav-link">Browse Properties</a>
+                <a href="#categories" class="nav-link">Categories</a>
+                <a href="#why-us" class="nav-link">Why Us</a>
+                
+                <div class="nav-divider"></div>
+
+                <!-- Wishlist Badge -->
+                <button class="wishlist-nav-btn" id="wishlistNavBtn" title="Saved Properties">
+                    <i class="fa-solid fa-heart"></i>
+                    <span class="wishlist-badge" id="wishlistBadgeCount">0</span>
+                </button>
+
+                <!-- Auth Buttons (Logged Out State) -->
+                <div class="auth-btn-group" id="loggedOutNav">
+                    <button class="nav-link btn-login-link" id="loginBtn">Login</button>
+                    <button class="btn btn-register" id="registerBtn">Register</button>
+                </div>
+
+                <!-- Logged In User Profile (Logged In State) -->
+                <div class="user-profile-menu hidden" id="loggedInNav">
+                    <div class="avatar-box" id="userAvatar">A</div>
+                    <span class="user-name" id="userNameText">Shinchan</span>
+                    <button class="btn-logout" id="logoutBtn" title="Logout">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container hero-container">
+            <!-- Hero Left Content -->
+            <div class="hero-content">
+                <div class="badge-pill">
+                    <i class="fa-solid fa-shield-halved"></i> TRUSTED BY 20,000+ HOMEOWNERS
+                </div>
+                
+                <h1 class="hero-title">
+                    Find Your <span class="highlight">Perfect</span><br>Next Chapter.
+                </h1>
+                
+                <p class="hero-description">
+                    Experience the most advanced real estate search platform. Discover verified listings, connect with top agents, and find a place you'll love.
+                </p>
+
+                <!-- Search Bar Container -->
+                <div class="search-box">
+                    <div class="search-field">
+                        <div class="field-icon">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <div class="field-info">
+                            <label for="searchLocation">LOCATION</label>
+                            <input type="text" id="searchLocation" placeholder="Where are you looking?" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="search-divider"></div>
+
+                    <div class="search-field">
+                        <div class="field-icon">
+                            <i class="fa-solid fa-house"></i>
+                        </div>
+                        <div class="field-info">
+                            <label for="searchType">PROPERTY TYPE</label>
+                            <select id="searchType">
+                                <option value="all">Select Type</option>
+                                <option value="Flat">Flat / Apartment</option>
+                                <option value="Villa">Independent House/Villa</option>
+                                <option value="Penthouse">Penthouse</option>
+                                <option value="Commercial">Commercial</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-search" id="heroSearchBtn">
+                        <i class="fa-solid fa-magnifying-glass"></i> Search
+                    </button>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-number">12k+</div>
+                        <div class="stat-label">READY PROPERTIES</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">AGENT NETWORK</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-number">4.9/5</div>
+                        <div class="stat-label">USER RATING</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Right Image Banner -->
+            <div class="hero-image-wrapper">
+                <div class="hero-image-card">
+                    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80" alt="Modern Architecture House" class="hero-img">
+                    
+                    <!-- Floating Verified Badge Card -->
+                    <div class="floating-verified-card">
+                        <div class="verified-icon-box">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <div class="verified-text">
+                            <h4>Verified Listing</h4>
+                            <p>Inspected by our professional team</p>
+                        </div>
+                        <span class="pre-approved-tag">PRE-APPROVED</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Browse Properties Portion with Filter Sidebar & View Options -->
+    <section class="properties-section" id="properties">
+        <div class="container">
+            <div class="browse-header-row">
+                <div>
+                    <span class="badge-pill">DISCOVER HOMES</span>
+                    <h2 class="section-title">Browse Properties</h2>
+                    <p class="section-subtitle">Explore premium verified real estate listings across top locations.</p>
+                </div>
+
+                <div class="action-buttons-group">
+                    <button class="btn btn-secondary" id="postPropertyBtn">
+                        <i class="fa-solid fa-plus"></i> List Your Property
+                    </button>
+                </div>
+            </div>
+
+            <div class="properties-layout">
+                
+                <!-- Filter Sidebar -->
+                <aside class="filter-sidebar">
+                    <div class="filter-header">
+                        <h3 class="filter-title">
+                            <i class="fa-solid fa-sliders"></i> Filters
+                        </h3>
+                        <button class="btn-reset" id="resetFilters">Reset</button>
+                    </div>
+
+                    <!-- Location Filter -->
+                    <div class="filter-group">
+                        <label class="filter-label">Location</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="filterCity" placeholder="Search by city...">
+                        </div>
+                    </div>
+
+                    <!-- Price Range Filter -->
+                    <div class="filter-group">
+                        <div class="filter-label-row">
+                            <label class="filter-label">Price Range</label>
+                            <span class="price-value" id="priceValue">₹10.00 Cr</span>
+                        </div>
+                        <div class="range-slider-wrapper">
+                            <input type="range" id="priceRange" min="10" max="1000" step="5" value="1000">
+                            <div class="range-marks">
+                                <span>₹1L</span>
+                                <span>₹10Cr</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Property Type Filter -->
+                    <div class="filter-group">
+                        <label class="filter-label">Property Type</label>
+                        <div class="checkbox-list">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" value="Flat" class="type-checkbox">
+                                <span class="checkmark"></span>
+                                Flat/Apartment
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" value="Villa" class="type-checkbox">
+                                <span class="checkmark"></span>
+                                Independent House/Villa
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" value="Penthouse" class="type-checkbox">
+                                <span class="checkmark"></span>
+                                Penthouse
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" value="Commercial" class="type-checkbox">
+                                <span class="checkmark"></span>
+                                Commercial
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- BHK Bedrooms Filter -->
+                    <div class="filter-group">
+                        <label class="filter-label">BHK (Bedrooms)</label>
+                        <div class="bhk-options" id="bhkContainer">
+                            <button class="bhk-btn active" data-bhk="all">All</button>
+                            <button class="bhk-btn" data-bhk="1">1</button>
+                            <button class="bhk-btn" data-bhk="2">2</button>
+                            <button class="bhk-btn" data-bhk="3">3</button>
+                            <button class="bhk-btn" data-bhk="4">4</button>
+                            <button class="bhk-btn" data-bhk="5+">5+</button>
+                        </div>
+                    </div>
+
+                    <!-- Furnishing Filter -->
+                    <div class="filter-group">
+                        <label class="filter-label">Furnishing</label>
+                        <div class="checkbox-list">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" value="Furnished" class="furnish-checkbox">
+                                <span class="checkmark"></span>
+                                Furnished
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" value="Semi-Furnished" class="furnish-checkbox">
+                                <span class="checkmark"></span>
+                                Semi-Furnished
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" value="Unfurnished" class="furnish-checkbox">
+                                <span class="checkmark"></span>
+                                Unfurnished
+                            </label>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Properties Content Area -->
+                <main class="properties-content">
+                    <!-- Top Toolbar -->
+                    <div class="results-toolbar">
+                        <div class="results-count" id="resultsCount">
+                            Showing <strong>5</strong> properties
+                        </div>
+                        
+                        <div class="toolbar-controls">
+                            <div class="view-toggle">
+                                <button class="view-btn active" id="gridViewBtn" title="Grid View">
+                                    <i class="fa-solid fa-border-all"></i>
+                                </button>
+                                <button class="view-btn" id="listViewBtn" title="List View">
+                                    <i class="fa-solid fa-list"></i>
+                                </button>
+                                <button class="view-btn" id="mapViewBtn" title="Map View">
+                                    <i class="fa-solid fa-map-location-dot"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="sort-wrapper">
+                                <span>Sort:</span>
+                                <select id="sortBy" class="sort-select">
+                                    <option value="latest">Latest</option>
+                                    <option value="price-low">Price: Low to High</option>
+                                    <option value="price-high">Price: High to Low</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Map View Placeholder Box (Hidden by default) -->
+                    <div class="map-view-container hidden" id="mapViewContainer">
+                        <div class="map-placeholder-content">
+                            <i class="fa-solid fa-location-dot map-icon"></i>
+                            <h3>Interactive Map Explorer</h3>
+                            <p>Pinpoint property locations, nearby metro stations, schools, and hospitals.</p>
+                            <div class="map-mockup-grid">
+                                <div class="map-pin pin-1"><i class="fa-solid fa-house"></i> ₹1.65 Cr</div>
+                                <div class="map-pin pin-2"><i class="fa-solid fa-house"></i> ₹1.85 Cr</div>
+                                <div class="map-pin pin-3"><i class="fa-solid fa-house"></i> ₹95 L</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Property Cards Grid -->
+                    <div class="properties-grid" id="propertiesGrid">
+                        <!-- Property cards populated via JS -->
+                    </div>
+
+                    <!-- Load More Button -->
+                    <div class="load-more-wrapper">
+                        <button class="btn btn-outline" id="loadMoreBtn">
+                            <i class="fa-solid fa-spinner"></i> Load More Properties
+                        </button>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </section>
+
+    <!-- Browse by Category Section -->
+    <section class="categories-section" id="categories">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Browse by Category</h2>
+                <p class="section-subtitle">
+                    Explore curated collections of properties tailored to your specific lifestyle and needs.
+                </p>
+            </div>
+
+            <div class="categories-grid">
+                <div class="category-card" data-category="Flat">
+                    <div class="category-icon-box">
+                        <i class="fa-solid fa-building"></i>
+                    </div>
+                    <h3 class="category-name">Modern Flats</h3>
+                    <span class="category-count">5 Properties</span>
+                </div>
+
+                <div class="category-card" data-category="Villa">
+                    <div class="category-icon-box">
+                        <i class="fa-solid fa-house-chimney"></i>
+                    </div>
+                    <h3 class="category-name">Luxury Villas</h3>
+                    <span class="category-count">2 Properties</span>
+                </div>
+
+                <div class="category-card" data-category="Penthouse">
+                    <div class="category-icon-box">
+                        <i class="fa-solid fa-building-flag"></i>
+                    </div>
+                    <h3 class="category-name">Penthouse</h3>
+                    <span class="category-count">1 Properties</span>
+                </div>
+
+                <div class="category-card" data-category="Commercial">
+                    <div class="category-icon-box">
+                        <i class="fa-solid fa-city"></i>
+                    </div>
+                    <h3 class="category-name">Commercial</h3>
+                    <span class="category-count">1 Properties</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why RealEstate is the Preferred Choice Section -->
+    <section class="features-section" id="why-us">
+        <div class="container features-layout">
+            
+            <!-- Left Side: 2x2 Feature Cards Grid -->
+            <div class="feature-cards-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-shield-check"></i>
+                    </div>
+                    <h3 class="feature-card-title">Verified Trust</h3>
+                    <p class="feature-card-desc">
+                        Every listing is strictly audited for ownership, condition, and legality.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h3 class="feature-card-title">Smart Search</h3>
+                    <p class="feature-card-desc">
+                        Our AI-driven algorithms help you find the best matches based on preferences.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-circle-dollar-to-slot"></i>
+                    </div>
+                    <h3 class="feature-card-title">Best Value</h3>
+                    <p class="feature-card-desc">
+                        Direct-from-owner listings and zero-commission options to ensure competitive prices.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-video"></i>
+                    </div>
+                    <h3 class="feature-card-title">Virtual Tours</h3>
+                    <p class="feature-card-desc">
+                        High-definition 3D tours allow you to experience the property from home.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Side: Content & Video Box -->
+            <div class="features-content">
+                <h2 class="features-heading">
+                    Why RealEstate<br>is the <span class="highlight">Preferred Choice.</span>
+                </h2>
+
+                <p class="features-body">
+                    We've reinvented the property search experience from the ground up. By focusing on transparency, technological precision, and user-centric design, we help you find not just a house, but a home.
+                </p>
+
+                <div class="video-preview-card" id="playVideoBtn">
+                    <div class="video-overlay">
+                        <div class="play-button">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Video Preview" class="video-thumb">
+                </div>
+
+                <ul class="features-checklist">
+                    <li>
+                        <i class="fa-solid fa-bolt"></i> Direct connection with certified agents
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-bolt"></i> Real-time market valuation data
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-bolt"></i> Secure document management system
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-bolt"></i> 24/7 Premium customer support
+                    </li>
+                </ul>
+
+                <a href="#" class="learn-more-link">
+                    Learn more about our process <i class="fa-solid fa-arrow-right-long"></i>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Combined Authentication Modal (Login & Register Tabs) -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-content auth-modal-content">
+            <button class="modal-close" id="closeAuthModal">&times;</button>
+            
+            <!-- Auth Tab Header -->
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" id="tabLoginBtn">Sign In</button>
+                <button class="auth-tab-btn" id="tabRegisterBtn">Create Account</button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <div class="auth-form-container" id="loginFormContainer">
+                <h3 class="auth-title">Welcome Back!</h3>
+                <p class="auth-subtitle">Log in to access your saved properties and inquiries.</p>
+
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" id="loginEmail" placeholder="name@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label>Password</label>
+                            <a href="#" class="forgot-link" onclick="alert('Password reset link sent to your email!')">Forgot Password?</a>
+                        </div>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="loginPassword" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" checked>
+                            <span class="checkmark"></span>
+                            Remember me
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-search full-width">
+                        Sign In <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <div class="auth-divider"><span>OR CONTINUE WITH</span></div>
+
+                <div class="social-auth-buttons">
+                    <button class="btn-social"><i class="fa-brands fa-google"></i> Google</button>
+                    <button class="btn-social"><i class="fa-brands fa-apple"></i> Apple</button>
+                </div>
+            </div>
+
+            <!-- REGISTER FORM -->
+            <div class="auth-form-container hidden" id="registerFormContainer">
+                <h3 class="auth-title">Create Your Account</h3>
+                <p class="auth-subtitle">Join 20,000+ homeowners and investors today.</p>
+
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" id="regName" placeholder="Shinchan" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" id="regEmail" placeholder="name@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Account Type</label>
+                        <div class="role-selector">
+                            <label class="role-card active">
+                                <input type="radio" name="accountRole" value="Buyer" checked>
+                                <i class="fa-solid fa-house-user"></i> Buyer / Tenant
+                            </label>
+                            <label class="role-card">
+                                <input type="radio" name="accountRole" value="Agent">
+                                <i class="fa-solid fa-user-tie"></i> Agent / Owner
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Create Password</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="regPassword" placeholder="Minimum 8 characters" required minlength="6">
+                        </div>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" required checked>
+                            <span class="checkmark"></span>
+                            I agree to the Terms of Service & Privacy Policy
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-search full-width">
+                        Create Account <i class="fa-solid fa-user-plus"></i>
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- List Property Modal -->
+    <div class="modal-overlay" id="postModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closePostModal">&times;</button>
+            <h3 class="auth-title">List Your Property</h3>
+            <p class="auth-subtitle">Reach thousands of active buyers & tenants instantly.</p>
+
+            <form id="postPropertyForm" class="auth-form">
+                <div class="form-group">
+                    <label>Property Title</label>
+                    <input type="text" id="postTitle" class="form-control" placeholder="e.g. Modern 3BHK Penthouse in Bandra" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Property Type</label>
+                        <select id="postType" class="form-control">
+                            <option value="Flat">Flat / Apartment</option>
+                            <option value="Villa">Independent Villa</option>
+                            <option value="Penthouse">Penthouse</option>
+                            <option value="Commercial">Commercial</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Price (₹ INR)</label>
+                        <input type="number" id="postPrice" class="form-control" placeholder="15000000" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Bedrooms (BHK)</label>
+                        <input type="number" id="postBeds" class="form-control" placeholder="3" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Area (Sq Ft)</label>
+                        <input type="number" id="postSqft" class="form-control" placeholder="1850" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>City & Address</label>
+                    <input type="text" id="postLocation" class="form-control" placeholder="e.g. Sector 62, Noida" required>
+                </div>
+
+                <button type="submit" class="btn btn-search full-width" style="margin-top: 12px;">
+                    Submit Listing <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Property Details Modal -->
+    <div class="modal-overlay" id="propertyModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic Modal Content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div class="modal-overlay" id="videoModal">
+        <div class="modal-content video-modal-content">
+            <button class="modal-close" id="closeVideoModal">&times;</button>
+            <div class="video-container">
+                <iframe id="videoIframe" src="" title="Property Virtual Tour" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <a href="#" class="logo">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-building-columns"></i>
+                    </div>
+                    <span class="logo-text">RealEstate</span>
+                </a>
+                <p>The standard of excellence in real estate exploration and luxury living.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <a href="#">About Us</a>
+                <a href="#properties">Properties</a>
+                <a href="#">Agents</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="footer-links">
+                <h4>Legal</h4>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Cookie Preferences</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2026 RealEstate Platform. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
