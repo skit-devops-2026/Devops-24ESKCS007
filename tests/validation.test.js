@@ -73,4 +73,18 @@ test('Property Listing Submission Validation', async (t) => {
         assert.strictEqual(res.isValid, false);
         assert.ok(res.errors.length > 0);
     });
+
+    await t.test('rejects property listing with missing or blank location', () => {
+        const missingLoc = {
+            title: 'Modern Penthouse Suite',
+            price: 15000000,
+            type: 'Penthouse',
+            beds: 3,
+            sqft: 2000,
+            location: ''
+        };
+        const res = validatePropertyListing(missingLoc);
+        assert.strictEqual(res.isValid, false, 'Listing without location should fail validation');
+        assert.ok(res.errors.some(e => e.toLowerCase().includes('location')));
+    });
 });
