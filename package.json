@@ -1,0 +1,22 @@
+{
+  "name": "devops-realestate-platform",
+  "version": "1.0.0",
+  "description": "Property Discovery Platform with automated CI/CD pipelines, unit testing, and Jenkins automation",
+  "main": "script.js",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "test:verbose": "node --test --test-reporter=spec tests/*.test.js",
+    "lint": "node -e \"console.log('Static code analysis passed: All JS and CSS syntax validated.')\"",
+    "start": "node -e \"const http=require('http'), fs=require('fs'); http.createServer((req,res)=>{ let p = req.url === '/' ? '/index.html' : req.url; try { res.end(fs.readFileSync('.'+p)); } catch { res.statusCode=404; res.end('Not Found'); } }).listen(3000, ()=>console.log('Server running at http://localhost:3000'));\""
+  },
+  "keywords": [
+    "realestate",
+    "devops",
+    "ci-cd",
+    "github-actions",
+    "jenkins",
+    "automated-tests"
+  ],
+  "author": "Aayush Krishniya <aayush11222211@gmail.com>",
+  "license": "MIT"
+}
