@@ -130,12 +130,102 @@ const extraProperties = [
     }
 ];
 
+// ==========================================
+// PURE BUSINESS LOGIC & DATA MANIPULATION
+// (Used by browser UI & tested via automated CI test suite)
+// ==========================================
+
+function filterPropertiesList(properties, filters = {}) {
+    if (!Array.isArray(properties)) return [];
+    const {
+        city = '',
+        maxPriceCr = null,
+        selectedTypes = [],
+        selectedBHK = 'all',
+        selectedFurnishings = []
+    } = filters;
+
+    const cityQuery = (city || '').toLowerCase().trim();
+
+    return properties.filter(item => {
+        if (!item) return false;
+        const matchesCity = !cityQuery ||
+            (item.location && item.location.toLowerCase().includes(cityQuery)) ||
+            (item.city && item.city.toLowerCase().includes(cityQuery));
+
+        const itemPriceCr = (item.price || 0) / 10000000;
+        const matchesPrice = (maxPriceCr === null || maxPriceCr === undefined) || itemPriceCr <= maxPriceCr;
+        const matchesType = !selectedTypes || selectedTypes.length === 0 || selectedTypes.includes(item.type);
+
+        let matchesBHK = true;
+        if (selectedBHK && selectedBHK !== 'all') {
+            if (selectedBHK === '5+') {
+                matchesBHK = (item.beds || 0) >= 5;
+            } else {
+                matchesBHK = item.beds === parseInt(selectedBHK, 10);
+            }
+        }
+
+        const matchesFurnish = !selectedFurnishings || selectedFurnishings.length === 0 || selectedFurnishings.includes(item.furnishing);
+
+        return matchesCity && matchesPrice && matchesType && matchesBHK && matchesFurnish;
+    });
+}
+
+function sortPropertiesList(properties, sortBy = 'default') {
+    if (!Array.isArray(properties)) return [];
+    const list = [...properties];
+    if (sortBy === 'price-low') {
+        return list.sort((a, b) => (a.price || 0) - (b.price || 0));
+    } else if (sortBy === 'price-high') {
+        return list.sort((a, b) => (b.price || 0) - (a.price || 0));
+    }
+    return list.sort((a, b) => (a.id || 0) - (b.id || 0));
+}
+
+function calculatePriceInCr(price) {
+    if (typeof price !== 'number' || isNaN(price) || price < 0) return 0;
+    return parseFloat((price / 10000000).toFixed(2));
+}
+
+function formatIndianCurrency(price) {
+    if (typeof price !== 'number' || isNaN(price) || price < 0) return '₹0';
+    return `₹${price.toLocaleString('en-IN')}`;
+}
+
+function validatePropertyListing(listing) {
+    const errors = [];
+    if (!listing || typeof listing !== 'object') {
+        return { isValid: false, errors: ['Listing object is required'] };
+    }
+    if (!listing.title || typeof listing.title !== 'string' || listing.title.trim().length < 5) {
+        errors.push('Title must be at least 5 characters');
+    }
+    if (typeof listing.price !== 'number' || isNaN(listing.price) || listing.price <= 0) {
+        errors.push('Price must be a positive number');
+    }
+    if (!listing.type || !['Flat', 'Villa', 'Penthouse', 'Commercial'].includes(listing.type)) {
+        errors.push('Invalid property type');
+    }
+    if (!listing.beds || typeof listing.beds !== 'number' || listing.beds <= 0) {
+        errors.push('Bedrooms count must be greater than 0');
+    }
+    if (!listing.sqft || typeof listing.sqft !== 'number' || listing.sqft <= 0) {
+        errors.push('Area in sqft must be greater than 0');
+    }
+    return {
+        isValid: errors.length === 0,
+        errors
+    };
+}
+
 let currentProperties = [...propertiesData];
 let selectedBHK = 'all';
 let isFavoriteMap = {};
 let currentUser = null;
 let isWishlistFilterActive = false;
 
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 const propertiesGrid = document.getElementById('propertiesGrid');
 const resultsCount = document.getElementById('resultsCount');
 const filterCityInput = document.getElementById('filterCity');
@@ -280,44 +370,25 @@ wishlistNavBtn.addEventListener('click', () => {
 
 function applyFilters() {
     isWishlistFilterActive = false;
-    const cityQuery = filterCityInput.value.toLowerCase().trim();
-    const maxPriceCr = parseFloat(priceRangeInput.value);
+    const city = filterCityInput ? filterCityInput.value : '';
+    const maxPriceCr = priceRangeInput ? (parseFloat(priceRangeInput.value) / 100) : 10;
     const selectedTypes = Array.from(document.querySelectorAll('.type-checkbox:checked')).map(cb => cb.value);
     const selectedFurnishings = Array.from(document.querySelectorAll('.furnish-checkbox:checked')).map(cb => cb.value);
 
-    currentProperties = propertiesData.filter(item => {
-        const matchesCity = !cityQuery || item.location.toLowerCase().includes(cityQuery) || item.city.toLowerCase().includes(cityQuery);
-        const itemPriceCr = item.price / 10000000;
-        const maxLimitCr = maxPriceCr / 100;
-        const matchesPrice = itemPriceCr <= maxLimitCr;
-        const matchesType = selectedTypes.length === 0 || selectedTypes.includes(item.type);
-
-        let matchesBHK = true;
-        if (selectedBHK !== 'all') {
-            if (selectedBHK === '5+') {
-                matchesBHK = item.beds >= 5;
-            } else {
-                matchesBHK = item.beds === parseInt(selectedBHK);
-            }
-        }
-
-        const matchesFurnish = selectedFurnishings.length === 0 || selectedFurnishings.includes(item.furnishing);
-
-        return matchesCity && matchesPrice && matchesType && matchesBHK && matchesFurnish;
+    currentProperties = filterPropertiesList(propertiesData, {
+        city,
+        maxPriceCr,
+        selectedTypes,
+        selectedBHK,
+        selectedFurnishings
     });
 
     sortProperties();
 }
 
 function sortProperties() {
-    const sortVal = sortBySelect.value;
-    if (sortVal === 'price-low') {
-        currentProperties.sort((a, b) => a.price - b.price);
-    } else if (sortVal === 'price-high') {
-        currentProperties.sort((a, b) => b.price - a.price);
-    } else {
-        currentProperties.sort((a, b) => a.id - b.id);
-    }
+    const sortVal = sortBySelect ? sortBySelect.value : 'default';
+    currentProperties = sortPropertiesList(currentProperties, sortVal);
     renderProperties(currentProperties);
 }
 
@@ -602,4 +673,17 @@ postPropertyForm.addEventListener('submit', (e) => {
     document.getElementById('properties').scrollIntoView({ behavior: 'smooth' });
 });
 
-renderProperties(currentProperties);
+    renderProperties(currentProperties);
+} // End browser DOM environment guard
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        propertiesData,
+        extraProperties,
+        filterPropertiesList,
+        sortPropertiesList,
+        calculatePriceInCr,
+        formatIndianCurrency,
+        validatePropertyListing
+    };
+}
