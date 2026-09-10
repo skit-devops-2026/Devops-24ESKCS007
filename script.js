@@ -201,6 +201,9 @@ function validatePropertyListing(listing) {
     if (!listing.title || typeof listing.title !== 'string' || listing.title.trim().length < 5) {
         errors.push('Title must be at least 5 characters');
     }
+    if (!listing.location || typeof listing.location !== 'string' || listing.location.trim().length < 3) {
+        errors.push('Location must be at least 3 characters');
+    }
     if (typeof listing.price !== 'number' || isNaN(listing.price) || listing.price <= 0) {
         errors.push('Price must be a positive number');
     }
