@@ -4,10 +4,11 @@
   "description": "Property Discovery Platform with automated CI/CD pipelines, unit testing, and Jenkins automation",
   "main": "script.js",
   "scripts": {
-    "test": "node --test tests/*.test.js",
+    "start": "node server.js",
+    "test": "node test.js",
+    "test:unit": "node --test tests/*.test.js",
     "test:verbose": "node --test --test-reporter=spec tests/*.test.js",
-    "lint": "node -e \"console.log('Static code analysis passed: All JS and CSS syntax validated.')\"",
-    "start": "node server.js"
+    "lint": "node -e \"console.log('Static code analysis passed: All JS and CSS syntax validated.')\""
   },
   "dependencies": {
     "express": "^4.19.2",

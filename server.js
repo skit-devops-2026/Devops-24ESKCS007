@@ -41,10 +41,7 @@ const todoSchema = new mongoose.Schema({
 
 const Todo = mongoose.model('Todo', todoSchema);
 
-// Helper validation
-function isValidTodoText(text) {
-  return typeof text === 'string' && text.trim().length > 0;
-}
+const { isValidTodoText } = require('./utils');
 
 // Routes
 // GET /todos - Fetch all todos
