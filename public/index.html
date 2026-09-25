@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List | Docker Practice App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --item-bg: #0f172a;
+      --item-border: #1e293b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 70%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 580px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .header-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      margin-bottom: 12px;
+    }
+
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    }
+
+    .todo-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .todo-input {
+      flex: 1;
+      padding: 14px 18px;
+      font-size: 0.95rem;
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .todo-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    }
+
+    .btn {
+      padding: 14px 22px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: inherit;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-delete {
+      background: transparent;
+      color: #94a3b8;
+      border: 1px solid transparent;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      border-radius: 8px;
+    }
+
+    .btn-delete:hover {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 16px;
+    }
+
+    .list-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .list-count {
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: #0f172a;
+      padding: 2px 10px;
+      border-radius: 12px;
+      color: #60a5fa;
+      border: 1px solid var(--card-border);
+    }
+
+    .todo-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .todo-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      transition: border-color 0.2s;
+    }
+
+    .todo-item:hover {
+      border-color: #475569;
+    }
+
+    .todo-text {
+      font-size: 0.95rem;
+      word-break: break-word;
+      flex: 1;
+      padding-right: 12px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 36px 16px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      opacity: 0.4;
+    }
+
+    .status-banner {
+      display: none;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 0.88rem;
+      line-height: 1.4;
+    }
+
+    .status-banner.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    .footer-note code {
+      background: #1e293b;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #93c5fd;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header class="header">
+      <div class="header-badge">DevOps Practice</div>
+      <h1 id="app-title">To-Do List App</h1>
+      <p>Node.js • Express • MongoDB • Docker • Compose</p>
+    </header>
+
+    <div id="status-banner" class="status-banner"></div>
+
+    <main class="card">
+      <form id="todo-form" class="todo-form">
+        <input 
+          type="text" 
+          id="todo-input" 
+          class="todo-input" 
+          placeholder="What needs to be done?" 
+          autocomplete="off" 
+          required 
+        />
+        <button type="submit" id="add-todo-btn" class="btn btn-primary">
+          Add Task
+        </button>
+      </form>
+
+      <div class="list-header">
+        <span class="list-title">Your Tasks</span>
+        <span id="todo-count" class="list-count">0 tasks</span>
+      </div>
+
+      <ul id="todo-list" class="todo-list"></ul>
+
+      <div id="empty-state" class="empty-state" style="display: none;">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        <p>No tasks yet. Add one above to get started!</p>
+      </div>
+    </main>
+
+    <footer class="footer-note">
+      Connected to MongoDB via <code>process.env.MONGO_URL</code>
+    </footer>
+  </div>
+
+  <script>
+    const form = document.getElementById('todo-form');
+    const input = document.getElementById('todo-input');
+    const list = document.getElementById('todo-list');
+    const countEl = document.getElementById('todo-count');
+    const emptyState = document.getElementById('empty-state');
+    const statusBanner = document.getElementById('status-banner');
+
+    function showError(message) {
+      statusBanner.textContent = message;
+      statusBanner.className = 'status-banner error';
+    }
+
+    function clearError() {
+      statusBanner.textContent = '';
+      statusBanner.className = 'status-banner';
+    }
+
+    async function fetchTodos() {
+      try {
+        const res = await fetch('/todos');
+        if (!res.ok) {
+          throw new Error(`Failed to load todos (HTTP ${res.status})`);
+        }
+        const todos = await res.json();
+        clearError();
+        renderTodos(todos);
+      } catch (err) {
+        showError(`Database connection error: ${err.message}. Make sure MongoDB is running.`);
+        renderTodos([]);
+      }
+    }
+
+    function renderTodos(todos) {
+      list.innerHTML = '';
+      countEl.textContent = `${todos.length} ${todos.length === 1 ? 'task' : 'tasks'}`;
+
+      if (todos.length === 0) {
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      todos.forEach(todo => {
+        const li = document.createElement('li');
+        li.className = 'todo-item';
+        li.id = `todo-${todo._id}`;
+
+        const span = document.createElement('span');
+        span.className = 'todo-text';
+        span.textContent = todo.text;
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'btn btn-delete';
+        delBtn.id = `delete-btn-${todo._id}`;
+        delBtn.textContent = 'Delete';
+        delBtn.onclick = () => deleteTodo(todo._id);
+
+        li.appendChild(span);
+        li.appendChild(delBtn);
+        list.appendChild(li);
+      });
+    }
+
+    async function addTodo(event) {
+      event.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+
+      try {
+        const res = await fetch('/todos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || `HTTP ${res.status}`);
+        }
+
+        input.value = '';
+        clearError();
+        await fetchTodos();
+      } catch (err) {
+        showError(`Error adding task: ${err.message}`);
+      }
+    }
+
+    async function deleteTodo(id) {
+      try {
+        const res = await fetch(`/todos/${id}`, {
+          method: 'DELETE'
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || `HTTP ${res.status}`);
+        }
+
+        clearError();
+        await fetchTodos();
+      } catch (err) {
+        showError(`Error deleting task: ${err.message}`);
+      }
+    }
+
+    form.addEventListener('submit', addTodo);
+    fetchTodos();
+  </script>
+</body>
+</html>
