@@ -1,0 +1,21 @@
+# Prometheus Configuration for To-Do Application Monitoring
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'todo-app'
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+    scrape_timeout: 4s
+    static_configs:
+      - targets: ['app:5000', 'localhost:5000']
+        labels:
+          application: 'todo-app'
+          environment: 'production'
+          service: 'todo-backend'
+
+  - job_name: 'prometheus'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['localhost:9090']

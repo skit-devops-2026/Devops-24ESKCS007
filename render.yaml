@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: devops-24eskcs007
+    env: docker
+    plan: free
+    region: oregon
+    dockerfilePath: Dockerfile
+    dockerContext: .
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGO_URL
+        sync: false
+        value: mongodb://localhost:27017/todos

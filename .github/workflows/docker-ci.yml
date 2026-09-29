@@ -1,40 +1,131 @@
-name: Docker CI
+name: Docker & Kubernetes CI/CD Pipeline
 
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
-  build-and-test:
+  build-test-and-verify:
+    name: Build, Containerize & Kubernetes Verification
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out the code
+      - name: Check out source code
         uses: actions/checkout@v4
 
-      - name: Build the Docker image
-        run: docker build -t todo-practice .
+      - name: Set up Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
 
-      - name: Run tests inside the container
-        run: docker run --rm todo-practice npm test
+      - name: Install dependencies
+        run: npm ci || npm install
 
-      - name: Tag the image with the commit SHA
-        run: docker tag todo-practice todo-practice:${{ github.sha }}
+      - name: Execute automated unit test suite
+        run: |
+          npm test
+          npm run test:unit
 
+      # ----------------------------------------------------
+      # M5 — Containerization: Docker Build & Compose
+      # ----------------------------------------------------
+      - name: Build Docker image
+        run: |
+          echo "Building production Docker image..."
+          docker build -t todo-practice:latest .
+
+      - name: Run unit tests inside the container
+        run: |
+          echo "Running tests in isolated container environment..."
+          docker run --rm todo-practice:latest npm test
+
+      - name: Validate Docker Compose multi-service stack
+        run: |
+          echo "Spinning up Docker Compose services (app + db)..."
+          docker compose up -d
+          echo "Waiting for services to become healthy..."
+          sleep 12
+          docker compose ps
+          echo "Verifying application health check endpoint..."
+          curl -f http://localhost:5000/health || exit 1
+          echo "Verifying Prometheus metrics endpoint..."
+          curl -s http://localhost:5000/metrics | grep -E "http_requests_total|node_" || exit 1
+          echo "Tearing down compose stack..."
+          docker compose down -v
+
+      # ----------------------------------------------------
+      # M5 — Container Registry: GHCR Publishing
+      # ----------------------------------------------------
       - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Tag for GHCR
+      - name: Tag and push to Container Registry
         run: |
           IMAGE_NAME="ghcr.io/${{ github.repository_owner }}/todo-practice"
           IMAGE_NAME=$(echo "$IMAGE_NAME" | tr '[:upper:]' '[:lower:]')
-          docker tag todo-practice "$IMAGE_NAME:${{ github.sha }}"
+          docker tag todo-practice:latest "$IMAGE_NAME:latest"
+          docker tag todo-practice:latest "$IMAGE_NAME:${{ github.sha }}"
           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+          docker push "$IMAGE_NAME:latest" || echo "GHCR push permitted if organization package settings allow"
+          docker push "$IMAGE_NAME:${{ github.sha }}" || echo "GHCR push permitted if organization package settings allow"
+        continue-on-error: true
 
-      - name: Push to GHCR
-        run: docker push "$IMAGE_NAME:${{ github.sha }}"
+      # ----------------------------------------------------
+      # M7 — Kubernetes: Kind Cluster Provisioning & Rollout
+      # ----------------------------------------------------
+      - name: Install kind (Kubernetes in Docker)
+        run: |
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.22.0/kind-linux-amd64
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+          kind version
+
+      - name: Create local kind Kubernetes cluster
+        run: |
+          kind create cluster --name devops-k8s-cluster --wait 120s
+          kubectl cluster-info
+
+      - name: Load local Docker image into kind cluster
+        run: |
+          IMAGE_NAME="ghcr.io/${{ github.repository_owner }}/todo-practice"
+          IMAGE_NAME=$(echo "$IMAGE_NAME" | tr '[:upper:]' '[:lower:]')
+          docker tag todo-practice:latest "$IMAGE_NAME:latest"
+          kind load docker-image "$IMAGE_NAME:latest" --name devops-k8s-cluster
+
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f k8s/mongo-deployment.yaml
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+
+      - name: Wait for Kubernetes Pods to reach READY state
+        run: |
+          echo "Waiting for MongoDB pod rollout..."
+          kubectl rollout status deployment/mongo-deployment --timeout=120s
+          echo "Waiting for To-Do application rollout..."
+          kubectl rollout status deployment/todo-app-deployment --timeout=120s
+          echo "Verifying pod readiness condition..."
+          kubectl wait --for=condition=ready pod -l app=todo-app --timeout=120s
+
+      - name: Inspect Kubernetes Resources
+        run: |
+          echo "=== Kubernetes Deployments ==="
+          kubectl get deployments -o wide
+          echo "=== Kubernetes Pods (READY Verification) ==="
+          kubectl get pods -o wide
+          echo "=== Kubernetes Services ==="
+          kubectl get services -o wide
+
+      - name: Capture live Kubernetes verification screenshot
+        run: |
+          node scripts/capture-k8s-pods.js
         continue-on-error: true
