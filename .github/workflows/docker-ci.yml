@@ -69,14 +69,13 @@ jobs:
 
       - name: Tag and push to Container Registry
         run: |
-          IMAGE_NAME="ghcr.io/${{ github.repository_owner }}/todo-practice"
+          IMAGE_NAME="ghcr.io/${{ github.repository }}"
           IMAGE_NAME=$(echo "$IMAGE_NAME" | tr '[:upper:]' '[:lower:]')
           docker tag todo-practice:latest "$IMAGE_NAME:latest"
           docker tag todo-practice:latest "$IMAGE_NAME:${{ github.sha }}"
           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
-          docker push "$IMAGE_NAME:latest" || echo "GHCR push permitted if organization package settings allow"
-          docker push "$IMAGE_NAME:${{ github.sha }}" || echo "GHCR push permitted if organization package settings allow"
-        continue-on-error: true
+          docker push "$IMAGE_NAME:latest"
+          docker push "$IMAGE_NAME:${{ github.sha }}"
 
       # ----------------------------------------------------
       # M7 — Kubernetes: Kind Cluster Provisioning & Rollout
@@ -95,7 +94,7 @@ jobs:
 
       - name: Load local Docker image into kind cluster
         run: |
-          IMAGE_NAME="ghcr.io/${{ github.repository_owner }}/todo-practice"
+          IMAGE_NAME="ghcr.io/${{ github.repository }}"
           IMAGE_NAME=$(echo "$IMAGE_NAME" | tr '[:upper:]' '[:lower:]')
           docker tag todo-practice:latest "$IMAGE_NAME:latest"
           kind load docker-image "$IMAGE_NAME:latest" --name devops-k8s-cluster

@@ -147,7 +147,7 @@ const htmlContent = `<!DOCTYPE html>
       <div class="output">${kubectlOutput.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
       <div class="badge-bar">
         <span class="badge badge-kind">Cluster Engine: kind (Kubernetes in Docker)</span>
-        <span class="badge badge-cluster">Target Image: ghcr.io/skit-devops-2026/todo-practice:latest</span>
+        <span class="badge badge-cluster">Target Image: ghcr.io/skit-devops-2026/devops-24eskcs007:latest</span>
         <span class="badge badge-pods">State: 3/3 Pods Ready (Running)</span>
       </div>
     </div>

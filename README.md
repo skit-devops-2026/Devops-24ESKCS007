@@ -248,9 +248,9 @@ docker compose down -v
 
 ### 3. Container Registry Publishing
 The image is tagged and pushed to GitHub Container Registry (GHCR):
-- **Image Identifier**: `ghcr.io/skit-devops-2026/todo-practice:latest`
+- **Image Identifier**: `ghcr.io/skit-devops-2026/devops-24eskcs007:latest`
 - **Release Tagging**: Tagged with both `:latest` and the specific commit SHA (`:${{ github.sha }}`).
-- **Registry URL**: [https://github.com/orgs/skit-devops-2026/packages](https://github.com/orgs/skit-devops-2026/packages)
+- **Registry URL**: [https://github.com/skit-devops-2026/Devops-24ESKCS007/pkgs/container/devops-24eskcs007](https://github.com/skit-devops-2026/Devops-24ESKCS007/pkgs/container/devops-24eskcs007)
 
 ---
 
@@ -308,7 +308,7 @@ The application is deployed to Kubernetes clusters (using `kind` or `k3d`) using
 
 ### 1. Kubernetes Deployment Manifest
 Defined in [k8s/deployment.yaml](file:///c:/Users/Aayush/OneDrive/Desktop/Devops/k8s/deployment.yaml):
-- **Image**: `ghcr.io/skit-devops-2026/todo-practice:latest`
+- **Image**: `ghcr.io/skit-devops-2026/devops-24eskcs007:latest`
 - **Replicas**: 2 pods for high availability.
 - **Container Port**: Port `5000` (named `http`).
 - **Resource Limits**: Requests (100m CPU, 128Mi RAM) and Limits (500m CPU, 256Mi RAM).
@@ -330,7 +330,7 @@ The deployment was verified against a local `kind` (Kubernetes in Docker) cluste
 kind create cluster --name devops-k8s-cluster
 
 # 2. Load container image
-kind load docker-image ghcr.io/skit-devops-2026/todo-practice:latest --name devops-k8s-cluster
+kind load docker-image ghcr.io/skit-devops-2026/devops-24eskcs007:latest --name devops-k8s-cluster
 
 # 3. Apply manifests
 kubectl apply -f k8s/mongo-deployment.yaml
@@ -367,7 +367,7 @@ Verified pod status captured and committed under [docs/kubernetes-pods.png](file
 | **M4 · Jenkins Pipeline** | `Jenkinsfile` present & declarative | ✅ Complete | 6-stage cross-platform pipeline (Windows & Unix) |
 | **M5 · Containerization** | Production `Dockerfile` | ✅ Complete | `node:20-alpine`, layer caching, healthcheck, clean optimization |
 | | Multi-service `docker-compose.yml` | ✅ Complete | `app` and `db` services, health dependencies, named volumes |
-| | Container registry publishing | ✅ Complete | `ghcr.io/skit-devops-2026/todo-practice:latest` & SHA tags in CI/CD |
+| | Container registry publishing | ✅ Complete | `ghcr.io/skit-devops-2026/devops-24eskcs007:latest` & SHA tags in CI/CD |
 | **M6 · Deployment & Monitoring** | Live URL responding | ✅ Complete | Deployed on Render: [https://devops-24eskcs007.onrender.com](https://devops-24eskcs007.onrender.com) |
 | | Prometheus configuration | ✅ Complete | [monitoring/prometheus.yml](file:///c:/Users/Aayush/OneDrive/Desktop/Devops/monitoring/prometheus.yml) scraping `/metrics` |
 | | Usable monitoring dashboard | ✅ Complete | [monitoring/dashboard.json](file:///c:/Users/Aayush/OneDrive/Desktop/Devops/monitoring/dashboard.json) with 10 production metrics panels |
